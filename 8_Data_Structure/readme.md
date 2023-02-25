@@ -47,3 +47,5 @@ passAdd := add
 
 fmt.Println(passAdd(1, 2)) //3
 ```
+
+note: function dapat dipanggil secara rekursif, namun hati-hati karena dapat menyebabkan stack overflow jika function dipanggil terlalu dalam
