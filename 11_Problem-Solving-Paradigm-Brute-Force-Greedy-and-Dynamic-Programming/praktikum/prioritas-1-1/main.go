@@ -5,7 +5,7 @@ import (
 	// "strings"
 )
 
-func convertRomawi(n int) {
+func convertBinary(n int) {
 	arr := make([]string, 0)
 	for i := 0; i < n; i++ {
 		arr = append(arr, fmt.Sprintf("%b", i))
@@ -14,5 +14,5 @@ func convertRomawi(n int) {
 }
 
 func main() {
-	convertRomawi(5)
+	convertBinary(5)
 }
