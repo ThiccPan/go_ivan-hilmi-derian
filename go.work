@@ -5,4 +5,5 @@ use (
     ./7_Time-Complexity-dan-Space-Complexity
     ./9_String-AdvanceFunction-Pointer-Method-Struct-and-Interface
     ./10_Recursive-Number-Theory-Sorting-Searching
+    ./11_Problem-Solving-Paradigm-Brute-Force-Greedy-and-Dynamic-Programming
 )
