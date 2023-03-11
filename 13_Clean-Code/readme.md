@@ -17,3 +17,17 @@ Guide/panduan dalam menuliskan kode
 - penulisan function yang efektif
     - menghindari side effect (perubahan variable diluar scope pemanggilan func)
     - menghindari jumlah parameter yang terlalu banyak
+- Menggunakan konveksi yang sudah ada
+## KISS dan DRY
+### KISS
+buat kode sesimpel mungkin
+- fungsi dan class harus kecil
+- fungsi digunakan untuk satu hal saja
+- fungsi jangan terlalu banyak argumen
+- perhatikan agar mencapai kondisi yang seimbang
+
+### DRY
+mengurangi duplikasi pada kode. kurangi melakukan copy paste pada kode
+
+### Refactoring
+menulis ulang kode tanpa mengubah logic dibaliknya. kode ditulis ulang menerapkan prinsip KISS dan DRY
