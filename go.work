@@ -8,4 +8,6 @@ use (
     ./11_Problem-Solving-Paradigm-Brute-Force-Greedy-and-Dynamic-Programming
     ./12_Concurrent-Programing
     ./20_Echo-Golang
+    ./21_ORM-and-Code-Structure-MVC
+    ./postgres-test
 )
