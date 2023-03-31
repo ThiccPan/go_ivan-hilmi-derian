@@ -13,10 +13,12 @@ import (
 // get all users
 func GetUsersController(c echo.Context) error {
 	var users []model.User
-
-	if err := config.DB.Find(&users).Error; err != nil {
+	
+	err := config.DB.Find(&users).Error
+	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
+	
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success get all users",
 		"users":   users,
@@ -45,7 +47,8 @@ func CreateUserController(c echo.Context) error {
 	user := model.User{}
 	c.Bind(&user)
 
-	if err := config.DB.Save(&user).Error; err != nil {
+	err := config.DB.Save(&user).Error
+	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
@@ -81,13 +84,14 @@ func UpdateUserController(c echo.Context) error {
 	user := model.User{}
 	userUpdate := &model.User{}
 
-	if err := config.DB.Find(&user, id).Error; err != nil {
+	err := config.DB.Find(&user, id).Error
+	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	err := c.Bind(userUpdate)
+	err = c.Bind(userUpdate)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	// Update attributes with `struct`, will only update non-zero fields
