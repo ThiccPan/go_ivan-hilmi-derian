@@ -47,7 +47,7 @@ func CreateUserController(c echo.Context) error {
 	user := model.User{}
 	c.Bind(&user)
 
-	err := config.DB.Save(&user).Error
+	err := config.DB.Create(&user).Error
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -63,11 +63,13 @@ func DeleteUserController(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	user := &model.User{}
 
-	if err := config.DB.Find(user, id).Error; err != nil {
+	err := config.DB.Find(user, id).Error;
+	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	if err := config.DB.Delete(user, id).Error; err != nil {
+	err = config.DB.Delete(user, id).Error
+	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 

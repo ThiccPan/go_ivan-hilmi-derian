@@ -34,7 +34,7 @@ func GetBookController(c echo.Context) error {
 
 	return c.JSON(http.StatusAccepted, map[string]interface{}{
 		"message": "success get book",
-		"books":   book,
+		"book":   book,
 	})
 }
 
@@ -42,13 +42,13 @@ func CreateBooksController(c echo.Context) error {
 	book := model.Book{}
 	c.Bind(&book)
 
-	err := config.DB.Save(&book).Error
+	err := config.DB.Create(&book).Error
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success add book",
-		"books":   book,
+		"book":   book,
 	})
 }
 
