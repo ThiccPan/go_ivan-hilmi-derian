@@ -34,7 +34,7 @@ func GetBookController(c echo.Context) error {
 
 	return c.JSON(http.StatusAccepted, map[string]interface{}{
 		"message": "success get book",
-		"book":   book,
+		"book":    book,
 	})
 }
 
@@ -48,7 +48,7 @@ func CreateBooksController(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success add book",
-		"book":   book,
+		"book":    book,
 	})
 }
 
@@ -57,9 +57,9 @@ func UpdateBookController(c echo.Context) error {
 
 	// find book with same id
 	book := model.Book{}
-	err := config.DB.First(&book, id).Error
+	err := config.DB.First(&book, id).Where("id = ?", id).Error
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest)
+		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
 	// bind req to book
@@ -84,12 +84,12 @@ func UpdateBookController(c echo.Context) error {
 func DeleteBookController(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	book := &model.Book{}
-	err := config.DB.First(book, id).Error
+	err := config.DB.First(&book, id).Where("id = ?", id).Error
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	err = config.DB.Delete(book).Where("id = ?", id).Error
+	err = config.DB.Delete(book, id).Error
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}

@@ -32,7 +32,8 @@ func GetUserController(c echo.Context) error {
 	user := model.User{}
 
 	// search user with id from req param
-	if err := config.DB.Find(&user, id).Error; err != nil {
+	err := config.DB.Find(&user, id).Where("id = ?", id).Error
+	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
@@ -63,7 +64,7 @@ func DeleteUserController(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	user := &model.User{}
 
-	err := config.DB.Find(user, id).Error;
+	err := config.DB.First(&user, id).Where("id = ?", id).Error
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -86,7 +87,7 @@ func UpdateUserController(c echo.Context) error {
 	user := model.User{}
 	userUpdate := &model.User{}
 
-	err := config.DB.Find(&user, id).Error
+	err := config.DB.Find(&user, id).Where("id = ?", id).Error
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}

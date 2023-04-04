@@ -54,7 +54,7 @@ func GetPostController(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	post := model.Post{}
 
-	err := config.DB.First(&post, id).Error
+	err := config.DB.First(&post, id).Where("id = ?", id).Error
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -71,7 +71,7 @@ func UpdatePostController(c echo.Context) error {
 	post := &model.Post{}
 	postUpdate := &model.Post{}
 
-	err := config.DB.First(post, id).Error
+	err := config.DB.First(&post, id).Where("id = ?", id).Error
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -95,12 +95,12 @@ func UpdatePostController(c echo.Context) error {
 func DeletePostController(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	post := &model.Post{}
-	err := config.DB.First(post, id).Error
+	err := config.DB.First(&post, id).Where("id = ?", id).Error
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	err = config.DB.Delete(post).Where("id = ?", id).Error
+	err = config.DB.Delete(post).Error
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
