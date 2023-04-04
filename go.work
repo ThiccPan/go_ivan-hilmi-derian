@@ -9,4 +9,6 @@ use (
     ./12_Concurrent-Programing
     ./20_Echo-Golang
     ./21_ORM-and-Code-Structure-MVC
+    ./22_Middleware
+    ./tes-jwt
 )
