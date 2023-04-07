@@ -40,7 +40,7 @@ func GetUserController(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"messages": "success get user with id " + fmt.Sprint(id),
-		"users":    user,
+		"user":     user,
 	})
 }
 
