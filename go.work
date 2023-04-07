@@ -10,5 +10,6 @@ use (
     ./20_Echo-Golang
     ./21_ORM-and-Code-Structure-MVC
     ./22_Middleware
+    ./23_Unit-test
     ./tes-jwt
 )
