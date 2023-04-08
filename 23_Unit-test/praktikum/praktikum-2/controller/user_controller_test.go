@@ -54,9 +54,11 @@ func InsertDataUserForGetUsers() error {
 	return nil
 }
 
-func initTestEnv(req *http.Request) (*httptest.ResponseRecorder, echo.Context) {
+func initTestEnv(req *http.Request, addData bool) (*httptest.ResponseRecorder, echo.Context) {
 	e := InitEchoTestAPI()
-	InsertDataUserForGetUsers()
+	if addData {
+		InsertDataUserForGetUsers()
+	}
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	return rec, c
@@ -73,7 +75,7 @@ func TestGetUsersController(t *testing.T) {
 	}
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	rec, c := initTestEnv(req)
+	rec, c := initTestEnv(req, true)
 
 	for _, testCase := range testCases {
 		c.SetPath(testCase.path)
@@ -96,14 +98,14 @@ func TestGetUserController(t *testing.T) {
 	var testCases = []testCase{
 		{
 			name:       "(success) get user with id",
-			path:       "/users",
+			path:       "/users/:id",
 			param:      "1",
 			expectCode: http.StatusOK,
 		},
 	}
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	rec, c := initTestEnv(req)
+	rec, c := initTestEnv(req, true)
 
 	for _, testCase := range testCases {
 		c.SetPath(testCase.path)
@@ -140,21 +142,60 @@ func TestCreateUserController(t *testing.T) {
 		// create request, recorder and test env for each testcase because every req body is different
 		req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(testCase.body))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-		rec, c := initTestEnv(req)
+		rec, c := initTestEnv(req, false)
 
 		c.SetPath(testCase.path)
 		if assert.NoError(t, CreateUserController(c)) {
 			assert.Equal(t, testCase.expectCode, rec.Code)
 			body := rec.Body.String()
-			t.Log(req.Body.Close())
 
 			var user UserResponse
 			err := json.Unmarshal([]byte(body), &user)
+
+			t.Log(user.Message)
 
 			if err != nil {
 				assert.Error(t, err, "error")
 			}
 			assert.Equal(t, "Alta", user.User.Name)
+		}
+	}
+}
+
+func TestUpdateUserController(t *testing.T) {
+	var testCases = []testCase{
+		{
+			name:       "(success) update user",
+			path:       "/users/:id",
+			param:      "1",
+			body:       `{"name":"Alta Update","email":"altaupdate@gmail.com","password":"123"}`,
+			expectCode: http.StatusOK,
+		},
+	}
+
+	for _, testCase := range testCases {
+
+		// create request, recorder and test env for each testcase because every req body is different
+		req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(testCase.body))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec, c := initTestEnv(req, true)
+
+		c.SetPath(testCase.path)
+		c.SetParamNames("id")
+		c.SetParamValues(testCase.param)
+
+		if assert.NoError(t, UpdateUserController(c)) {
+			assert.Equal(t, testCase.expectCode, rec.Code)
+			body := rec.Body.String()
+
+			var user UserResponse
+			err := json.Unmarshal([]byte(body), &user)
+			t.Log(user.Message)
+
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, "Alta Update", user.User.Name)
 		}
 	}
 }
