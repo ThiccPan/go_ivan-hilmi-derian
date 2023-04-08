@@ -1,8 +1,9 @@
-package controller
+package test
 
 import (
 	"23_Unit-test/praktikum/praktikum-2/config"
 	"23_Unit-test/praktikum/praktikum-2/model"
+	"23_Unit-test/praktikum/praktikum-2/controller"
 	"encoding/json"
 
 	"net/http"
@@ -15,15 +16,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type testCase struct {
-	name       string
-	path       string
-	param      string
-	body       string
-	expectCode int
-	sizeData   int
-}
-
 type UsersResponse struct {
 	Message string
 	Users   []model.User
@@ -32,12 +24,6 @@ type UsersResponse struct {
 type UserResponse struct {
 	Message string
 	User    model.User
-}
-
-func InitEchoTestAPI() *echo.Echo {
-	config.InitDBTest()
-	e := echo.New()
-	return e
 }
 
 func InsertDataUserForGetUsers() error {
@@ -79,7 +65,7 @@ func TestGetUsersController(t *testing.T) {
 
 	for _, testCase := range testCases {
 		c.SetPath(testCase.path)
-		if assert.NoError(t, GetUsersController(c)) {
+		if assert.NoError(t, controller.GetUsersController(c)) {
 			assert.Equal(t, testCase.expectCode, rec.Code)
 			body := rec.Body.String()
 
@@ -111,7 +97,7 @@ func TestGetUserController(t *testing.T) {
 		c.SetPath(testCase.path)
 		c.SetParamNames("id")
 		c.SetParamValues(testCase.param)
-		if assert.NoError(t, GetUserController(c)) {
+		if assert.NoError(t, controller.GetUserController(c)) {
 			assert.Equal(t, testCase.expectCode, rec.Code)
 			body := rec.Body.String()
 
@@ -145,7 +131,7 @@ func TestCreateUserController(t *testing.T) {
 		rec, c := initTestEnv(req, false)
 
 		c.SetPath(testCase.path)
-		if assert.NoError(t, CreateUserController(c)) {
+		if assert.NoError(t, controller.CreateUserController(c)) {
 			assert.Equal(t, testCase.expectCode, rec.Code)
 			body := rec.Body.String()
 
@@ -184,7 +170,7 @@ func TestUpdateUserController(t *testing.T) {
 		c.SetParamNames("id")
 		c.SetParamValues(testCase.param)
 
-		if assert.NoError(t, UpdateUserController(c)) {
+		if assert.NoError(t, controller.UpdateUserController(c)) {
 			assert.Equal(t, testCase.expectCode, rec.Code)
 			body := rec.Body.String()
 
