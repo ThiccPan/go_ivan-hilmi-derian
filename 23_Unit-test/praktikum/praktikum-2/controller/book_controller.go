@@ -10,31 +10,38 @@ import (
 )
 
 func GetBooksController(c echo.Context) error {
-	var books []model.Book
+	books := []model.Book{}
 
 	err := config.DB.Find(&books).Error
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusAccepted, map[string]interface{}{
+	if len(books) < 1 {
+		return echo.NewHTTPError(http.StatusNotFound, "book list is empty!")
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success get all books",
 		"books":   books,
 	})
 }
 
 func GetBookController(c echo.Context) error {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid id!")
+	}
 	var book model.Book
 
-	err := config.DB.First(&book, id).Where("id = ?", id).Error
+	err = config.DB.First(&book, id).Where("id = ?", id).Error
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	return c.JSON(http.StatusAccepted, map[string]interface{}{
+	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success get book",
-		"book":   book,
+		"book":    book,
 	})
 }
 
@@ -48,7 +55,7 @@ func CreateBooksController(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success add book",
-		"book":   book,
+		"book":    book,
 	})
 }
 

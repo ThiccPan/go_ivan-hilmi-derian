@@ -26,7 +26,7 @@ type UserResponse struct {
 	User    model.User
 }
 
-func InsertDataUserForGetUsers() error {
+func InsertMockUserData() error {
 	user := model.User{
 		Name:     "Alta",
 		Password: "123",
@@ -40,16 +40,6 @@ func InsertDataUserForGetUsers() error {
 	return nil
 }
 
-func initTestEnv(req *http.Request, addData bool) (*httptest.ResponseRecorder, echo.Context) {
-	e := InitEchoTestAPI()
-	if addData {
-		InsertDataUserForGetUsers()
-	}
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
-	return rec, c
-}
-
 func TestGetUsersController(t *testing.T) {
 	testCases := []testCase{
 		{
@@ -61,7 +51,9 @@ func TestGetUsersController(t *testing.T) {
 	}
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	rec, c := initTestEnv(req, true)
+	rec, c := initTestEnv(req)
+	InsertMockUserData()
+	
 
 	for _, testCase := range testCases {
 		c.SetPath(testCase.path)
@@ -91,7 +83,8 @@ func TestGetUserController(t *testing.T) {
 	}
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	rec, c := initTestEnv(req, true)
+	rec, c := initTestEnv(req)
+	InsertMockUserData()
 
 	for _, testCase := range testCases {
 		c.SetPath(testCase.path)
@@ -128,7 +121,7 @@ func TestCreateUserController(t *testing.T) {
 		// create request, recorder and test env for each testcase because every req body is different
 		req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(testCase.body))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-		rec, c := initTestEnv(req, false)
+		rec, c := initTestEnv(req)
 
 		c.SetPath(testCase.path)
 		if assert.NoError(t, controller.CreateUserController(c)) {
@@ -164,7 +157,8 @@ func TestUpdateUserController(t *testing.T) {
 		// create request, recorder and test env for each testcase because every req body is different
 		req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(testCase.body))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-		rec, c := initTestEnv(req, true)
+		rec, c := initTestEnv(req)
+		InsertMockUserData()
 
 		c.SetPath(testCase.path)
 		c.SetParamNames("id")
