@@ -2,6 +2,7 @@ package test
 
 import (
 	"23_Unit-test/praktikum/praktikum-2/config"
+	"23_Unit-test/praktikum/praktikum-2/util"
 	"net/http"
 	"net/http/httptest"
 
@@ -14,6 +15,7 @@ type testCase struct {
 	param       string
 	body        string
 	expectCode  int
+	expectTitle string
 	sizeData    int
 }
 
@@ -25,7 +27,8 @@ func InitEchoTestAPI() *echo.Echo {
 
 func initTestEnv(req *http.Request) (*httptest.ResponseRecorder, echo.Context) {
 	e := InitEchoTestAPI()
-	rec := httptest.NewRecorder()
+	util.InitValidateConf(e)
+	rec := httptest.NewRecorder(	)
 	c := e.NewContext(req, rec)
 	return rec, c
 }

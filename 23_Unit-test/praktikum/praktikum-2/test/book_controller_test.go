@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/labstack/echo"
@@ -133,6 +134,115 @@ func TestGetBookController(t *testing.T) {
 				assert.Error(t, err, "error")
 			} else {
 				assert.Equal(t, testCase.param, strconv.Itoa(int(book.Book.ID)))
+			}
+		})
+	}
+}
+
+func TestCreateBookController(t *testing.T) {
+	var testCases = []testCase{
+		{
+			name:        "(success) create user",
+			path:        "/books",
+			body:        `{"title":"Book test","author":"author 1","publisher":"publisher 1"}`,
+			expectCode:  http.StatusOK,
+			expectTitle: "Book test",
+		},
+		{
+			name:       "(failed) invalid req body",
+			path:       "/books",
+			body:       `{"lorem":"ipsum"}`,
+			expectCode: http.StatusBadRequest,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			// create request, recorder and test env for each testcase because every req body is different
+			req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(testCase.body))
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+			rec, c := initTestEnv(req)
+
+			c.SetPath(testCase.path)
+			err := controller.CreateBooksController(c)
+
+			// check handler error
+			if err != nil {
+				t.Log(err.Error())
+				he, ok := err.(*echo.HTTPError)
+				if ok {
+					assert.Equal(t, testCase.expectCode, he.Code)
+				}
+			}
+			body := rec.Body.String()
+
+			var book BookResponse
+			err = json.Unmarshal([]byte(body), &book)
+
+			t.Log(book.Message)
+
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, testCase.expectTitle, book.Book.Title)
+			t.Log(book.Book.Title)
+		})
+
+	}
+}
+
+func TestUpdateBookController(t *testing.T) {
+	var testCases = []testCase{
+		{
+			name:       "(failed) id not found",
+			path:       "/books/:id",
+			param:      "nil",
+			body:       `{"title":"Book update","author":"author 1 update","publisher":"publisher 1 update"}`,
+			expectCode: http.StatusBadRequest,
+		},
+		{
+			name:        "(success) update user",
+			path:        "/books/:id",
+			param:       "1",
+			body:        `{"title":"Book update","author":"author 1 update","publisher":"publisher 1 update"}`,
+			expectCode:  http.StatusOK,
+			expectTitle: "Book update",
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			// create request, recorder and test env for each testcase because every req body is different
+			req := httptest.NewRequest(http.MethodPut, "/", strings.NewReader(testCase.body))
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+			rec, c := initTestEnv(req)
+
+			err := InsertMockBookData()
+
+			// check handler error
+			if err != nil {
+				t.Log(err.Error())
+				he, ok := err.(*echo.HTTPError)
+				if ok {
+					assert.Equal(t, testCase.expectCode, he.Code)
+				}
+			}
+
+			c.SetPath(testCase.path)
+			c.SetParamNames("id")
+			c.SetParamValues(testCase.param)
+
+			controller.UpdateBookController(c)
+			body := rec.Body.String()
+
+			var book BookResponse
+			err = json.Unmarshal([]byte(body), &book)
+			t.Log(book)
+
+			if err != nil {
+				assert.Error(t, err, "error")
+			} else {
+				assert.Equal(t, testCase.expectTitle, book.Book.Title)
 			}
 		})
 	}

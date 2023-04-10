@@ -6,7 +6,7 @@ import (
 
 type Book struct {
 	gorm.Model
-	Title     string `json:"title" form:"title"`
-	Author    string `json:"author" form:"author"`
-	Publisher string `json:"publisher" form:"publisher"`
+	Title     string `json:"title" form:"title" validate:"required"`
+	Author    string `json:"author" form:"author" validate:"required"`
+	Publisher string `json:"publisher" form:"publisher" validate:"required"`
 }

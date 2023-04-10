@@ -3,6 +3,7 @@ package route
 import (
 	"23_Unit-test/praktikum/praktikum-2/constants"
 	"23_Unit-test/praktikum/praktikum-2/controller"
+	"23_Unit-test/praktikum/praktikum-2/util"
 	m "23_Unit-test/praktikum/praktikum-2/middleware"
 
 	eMid "github.com/labstack/echo/middleware"
@@ -14,6 +15,7 @@ func NewInstance() *echo.Echo {
 	// create a new echo instance
 	e := echo.New()
 	m.Logger(e)
+	util.InitValidateConf(e)
 
 	eJWT := e.Group("")
 	eJWT.Use(eMid.JWT([]byte(constants.JWT_SECRET)))

@@ -7,6 +7,6 @@ import (
 
 func Logger(e *echo.Echo) {
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "method=${method}, uri=${uri}, status=${status}\n",
+		Format: "method=${method}, uri=${uri}, status=${status}, error=${error}\n",
 	  }))
 }

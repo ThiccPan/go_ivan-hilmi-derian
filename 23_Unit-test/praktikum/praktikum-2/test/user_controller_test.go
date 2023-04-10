@@ -155,7 +155,7 @@ func TestUpdateUserController(t *testing.T) {
 	for _, testCase := range testCases {
 
 		// create request, recorder and test env for each testcase because every req body is different
-		req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(testCase.body))
+		req := httptest.NewRequest(http.MethodPut, "/", strings.NewReader(testCase.body))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		rec, c := initTestEnv(req)
 		InsertMockUserData()
