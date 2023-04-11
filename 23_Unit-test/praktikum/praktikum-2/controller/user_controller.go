@@ -47,9 +47,17 @@ func GetUserController(c echo.Context) error {
 // create new user
 func CreateUserController(c echo.Context) error {
 	user := model.User{}
-	c.Bind(&user)
+	err := c.Bind(&user)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
 
-	err := config.DB.Create(&user).Error
+	err = c.Validate(&user)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	err = config.DB.Create(&user).Error
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}

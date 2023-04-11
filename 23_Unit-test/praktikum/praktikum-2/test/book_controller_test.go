@@ -44,7 +44,7 @@ func TestGetBooksController(t *testing.T) {
 	var testCases = []testCase{
 		{
 			name:       "(failed) wrong path name",
-			path:       "/books",
+			path:       "/book",
 			sizeData:   0,
 			expectCode: http.StatusNotFound,
 		},
@@ -142,7 +142,7 @@ func TestGetBookController(t *testing.T) {
 func TestCreateBookController(t *testing.T) {
 	var testCases = []testCase{
 		{
-			name:        "(success) create user",
+			name:        "(success) create book",
 			path:        "/books",
 			body:        `{"title":"Book test","author":"author 1","publisher":"publisher 1"}`,
 			expectCode:  http.StatusOK,
@@ -243,6 +243,56 @@ func TestUpdateBookController(t *testing.T) {
 				assert.Error(t, err, "error")
 			} else {
 				assert.Equal(t, testCase.expectTitle, book.Book.Title)
+			}
+		})
+	}
+}
+
+func TestDeleteBookController(t *testing.T) {
+	var testCases = []testCase{
+		{
+			name:       "(failed) id invalid",
+			path:       "/books/:id",
+			param:      "lorem",
+			expectCode: http.StatusBadRequest,
+		},
+		{
+			name:       "(success) delete book with id",
+			path:       "/books/:id",
+			param:      "1",
+			expectCode: http.StatusOK,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodDelete, "/", nil)
+			rec, c := initTestEnv(req)
+			InsertMockBookData()
+
+			c.SetPath(testCase.path)
+			c.SetParamNames("id")
+			c.SetParamValues(testCase.param)
+			err := controller.DeleteBookController(c)
+
+			// check handler error
+			if err != nil {
+				he, ok := err.(*echo.HTTPError)
+				if ok {
+					assert.Equal(t, testCase.expectCode, he.Code)
+				}
+			}
+
+			body := rec.Body.String()
+
+			var book BookResponse
+			err = json.Unmarshal([]byte(body), &book)
+			t.Log(book.Book)
+
+			if err != nil {
+				assert.Error(t, err, "error")
+			} else {
+				assert.Equal(t, testCase.param, strconv.Itoa(int(book.Book.ID)))
 			}
 		})
 	}
