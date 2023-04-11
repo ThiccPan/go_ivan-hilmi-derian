@@ -107,6 +107,6 @@ func DeletePostController(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "success delete",
-		"book":    post,
+		"post":    post,
 	})
 }
