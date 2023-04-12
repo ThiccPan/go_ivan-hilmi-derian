@@ -20,7 +20,7 @@ func (m *mockUserRepository) Create(data model.User) error {
 }
 
 func (m *mockUserRepository) FetchAll() ([]model.User, error) {
-	ret := m.Called(0)
+	ret := m.Called()
 	return ret.Get(0).([]model.User), ret.Error(1)
 }
 
