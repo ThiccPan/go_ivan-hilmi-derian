@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type UserController interface {}
+type UserController interface{}
 
 type userController struct {
 	usercase usecase.UserUsecase
@@ -31,13 +31,27 @@ func (u *userController) GetAllUsers(c echo.Context) error {
 	return c.JSON(200, echo.Map{
 		"data": data,
 	})
-	
+
 }
 
 func (u *userController) CreateUser(c echo.Context) error {
 	userPayload := dto.CreateUserRequest{}
 	c.Bind(&userPayload)
 	data, err := u.usercase.Create(userPayload)
+	if err != nil {
+		return c.JSON(500, echo.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.JSON(200, echo.Map{
+		"data": data,
+	})
+}
+
+func (u *userController) Login(c echo.Context) error {
+	userPayload := dto.LoginUserRequest{}
+	c.Bind(&userPayload)
+	data, err := u.usercase.Login(userPayload)
 	if err != nil {
 		return c.JSON(500, echo.Map{
 			"error": err.Error(),

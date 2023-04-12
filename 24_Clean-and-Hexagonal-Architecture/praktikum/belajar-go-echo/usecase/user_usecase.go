@@ -4,11 +4,13 @@ import (
 	"belajar-go-echo/dto"
 	"belajar-go-echo/model"
 	"belajar-go-echo/repository"
+	"belajar-go-echo/middleware"
 )
 
 type UserUsecase interface {
 	Create(payloads dto.CreateUserRequest) (*model.User, error)
 	GetAll() ([]model.User, error)
+	Login(payload dto.LoginUserRequest) (string, error)
 }
 
 type userUsecase struct {
@@ -33,4 +35,22 @@ func (u *userUsecase) Create(payloads dto.CreateUserRequest) (*model.User, error
 
 func (u *userUsecase) GetAll() ([]model.User, error) {
 	return u.userRepository.FetchAll()
+}
+
+func (u *userUsecase) Login(payload dto.LoginUserRequest) (string, error) {
+	user, err := u.userRepository.FetchByEmail(payload.Email)
+	if err != nil {
+		return "", err
+	}
+
+	if payload.Password != user.Password {
+		return "", err
+	}
+	
+	t, mErr := middleware.GenerateToken(user.Email)
+	if mErr != nil {
+		return "", err
+	}
+
+	return t, err
 }

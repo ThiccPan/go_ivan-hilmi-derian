@@ -9,6 +9,7 @@ import (
 type UserRepository interface {
 	Create(data model.User) error
 	FetchAll() ([]model.User, error)
+	FetchByEmail(email string) (model.User, error)
 }
 
 type userRepository struct {
@@ -22,11 +23,17 @@ func NewUserRepository(db *gorm.DB) *userRepository {
 }
 
 func (u *userRepository) Create(data model.User) error {
-	return u.db.Create(data).Error
+	return u.db.Create(&data).Error
 }
 
 func (u *userRepository) FetchAll() ([]model.User, error) {
 	user := []model.User{}
 	err := u.db.Find(&user).Error
+	return user, err
+}
+
+func (u *userRepository) FetchByEmail(email string) (model.User, error) {
+	user := model.User{}
+	err := u.db.Where("email = ?", email).First(&user).Error
 	return user, err
 }
