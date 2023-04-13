@@ -4,12 +4,13 @@ import (
 	"belajar-go-echo/config"
 	constants "belajar-go-echo/constant"
 	"belajar-go-echo/controller"
+	"belajar-go-echo/middleware"
 	"belajar-go-echo/repository"
 	"belajar-go-echo/usecase"
 	"fmt"
 
-	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo-jwt"
+	"github.com/labstack/echo/v4"
 )
 
 func InitRoute(app *echo.Echo) {
@@ -26,7 +27,7 @@ func InitRoute(app *echo.Echo) {
 	}
 
 	userRepo := repository.NewUserRepository(db)
-	usercase := usecase.NewUserUsecase(userRepo)
+	usercase := usecase.NewUserUsecase(userRepo, middleware.NewAuthJWT())
 	userController := controller.NewUserController(usercase)
 
 	appJwt := app.Group("")

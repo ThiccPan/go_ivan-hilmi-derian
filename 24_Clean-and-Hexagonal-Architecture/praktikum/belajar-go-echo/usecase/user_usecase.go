@@ -15,11 +15,13 @@ type UserUsecase interface {
 
 type userUsecase struct {
 	userRepository repository.UserRepository
+	authMethod middleware.AuthJWT
 }
 
-func NewUserUsecase(userRepo repository.UserRepository) *userUsecase {
+func NewUserUsecase(userRepo repository.UserRepository, authMeth middleware.AuthJWT) *userUsecase {
 	return &userUsecase{
 		userRepository: userRepo,
+		authMethod: authMeth,
 	}
 }
 
@@ -47,7 +49,7 @@ func (u *userUsecase) Login(payload dto.LoginUserRequest) (string, error) {
 		return "", err
 	}
 	
-	t, mErr := middleware.GenerateToken(user.Email)
+	t, mErr := u.authMethod.GenerateToken(user.Email)
 	if mErr != nil {
 		return "", err
 	}

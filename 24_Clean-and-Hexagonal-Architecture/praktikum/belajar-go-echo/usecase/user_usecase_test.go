@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"belajar-go-echo/dto"
+	"belajar-go-echo/middleware"
 	"belajar-go-echo/model"
 	"belajar-go-echo/repository"
 	"testing"
@@ -30,7 +31,7 @@ func TestCreate(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			mockUserRepository := repository.NewMockUserRepository()
 			mockUserRepository.On("Create", mock.Anything).Return(testCase.expectErr)
-			service := NewUserUsecase(mockUserRepository)
+			service := NewUserUsecase(mockUserRepository, nil)
 			// t.Log(service)
 
 			data, err := service.Create(testCase.data)
@@ -73,7 +74,7 @@ func TestGetAll(t *testing.T) {
 
 		mockUserRepository := repository.NewMockUserRepository()
 		mockUserRepository.On("FetchAll").Return(mockDataList, testCase.expectErr)
-		service := NewUserUsecase(mockUserRepository)
+		service := NewUserUsecase(mockUserRepository, nil)
 
 		data, err := service.GetAll()
 		t.Log(data)
@@ -87,5 +88,37 @@ func TestGetAll(t *testing.T) {
 }
 
 func TestLogin(t *testing.T) {
+	testCases := []struct {
+		name      string
+		data      dto.LoginUserRequest
+		expectErr error
+	}{
+		{
+			name: "success",
+			data: dto.LoginUserRequest{
+				Email:    "tes@gmail.com",
+				Password: "123",
+			},
+			expectErr: nil,
+		},
+	}
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			mockUserRepository := repository.NewMockUserRepository()
+			mockUserRepository.On("FetchByEmail", mock.Anything).Return(model.User{
+				Email: testCase.data.Email,
+				Password: testCase.data.Password,
+			}, testCase.expectErr)
+			service := NewUserUsecase(mockUserRepository, middleware.NewAuthJWT())
 
+			data, err := service.Login(testCase.data)
+			t.Log(data)
+			t.Log(err)
+			if testCase.expectErr != nil {
+				assert.NotNil(t, err)
+			} else {
+				assert.NotNil(t, data)
+			}
+		})
+	}
 }

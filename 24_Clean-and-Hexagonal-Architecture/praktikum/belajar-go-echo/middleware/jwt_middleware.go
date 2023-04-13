@@ -41,17 +41,17 @@ type jwtCustomClaims struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateToken(email string) (string, error) {
-	claims := &jwtCustomClaims{
-		email,
-		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 72)),
-		},
-	}
+// func GenerateToken(email string) (string, error) {
+// 	claims := &jwtCustomClaims{
+// 		email,
+// 		jwt.RegisteredClaims{
+// 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 72)),
+// 		},
+// 	}
 
-	// Create token with claims
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+// 	// Create token with claims
+// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	// Generate encoded token and send it as response.
-	return token.SignedString([]byte(constants.JWT_SECRET))
-}
+// 	// Generate encoded token and send it as response.
+// 	return token.SignedString([]byte(constants.JWT_SECRET))
+// }
