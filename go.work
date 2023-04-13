@@ -12,5 +12,6 @@ use (
     ./22_Middleware
     ./23_Unit-test
     ./24_Clean-and-Hexagonal-Architecture/praktikum/belajar-go-echo
+    ./25_Docker
     ./tes-jwt
 )
