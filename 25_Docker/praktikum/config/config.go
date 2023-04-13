@@ -3,6 +3,7 @@ package config
 import (
 	"25_Docker/praktikum/model"
 	"fmt"
+	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -22,15 +23,13 @@ type Config struct {
 
 func InitDB() {
 
-	config := Config{
-		DB_Username: "thiccpan",
-		DB_Password: "dbpsqlpass432",
-		DB_Port:     "5432",
-		DB_Host:     "localhost",
-		DB_Name:     "praktikum_16",
-	}
-
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai", config.DB_Host, config.DB_Username, config.DB_Password, config.DB_Name, config.DB_Port)
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
+		"db",
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_NAME"),
+		"5432",
+	)
 
 	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})

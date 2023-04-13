@@ -1,11 +1,11 @@
-module 25_Docker
+module 25_Docker/praktikum
 
 go 1.20
 
 require (
 	github.com/labstack/echo v3.3.10+incompatible
 	gorm.io/driver/postgres v1.5.0
-	gorm.io/gorm v1.24.7-0.20230306060331-85eaf9eeda11
+	gorm.io/gorm v1.25.0
 )
 
 require (
